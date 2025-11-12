@@ -263,9 +263,27 @@ header h2 { margin: 0; flex-grow: 1; }
   opacity: 1.0;
   margin-top: 1px; /* 给第二行添加顶部间距 */
 }
+  body {
+  position: relative;
+  background: none;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(255,255,255,0.35);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: -1;
+}
 </style>
 </head>
 <body>
+  <div id="background-container" style="position:fixed; top:0; left:0; width:100%; height:100%; z-index:-2; overflow:hidden;">
+  <img src="https://pic1.imgdb.cn/item/69148a523203f7be00f9686c.jpg" 
+       style="width:100%; height:100%; object-fit:cover; position:absolute;" 
+       alt="背景图">
+  </div>
 <header>
   <div style="display:flex;align-items:center;gap:12px;">
     <img src="https://pic1.imgdb.cn/item/69147ed43203f7be00f94ce6.png" alt="logo" />
@@ -512,4 +530,5 @@ renderAccess();
 renderItdog("module2_itdog", itdogAPIs);
 </script>
 </body>
+
 </html>
