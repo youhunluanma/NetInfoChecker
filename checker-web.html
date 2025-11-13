@@ -3,12 +3,11 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>网络综合查询器 - 多出口在线版</title>
+<title>网络综合查询器多出口在线版</title>
 <link rel="icon" href="https://pic1.imgdb.cn/item/69147ed43203f7be00f94ce6.png" type="image/png">
 <style>
 :root {
   --theme-color: #8e8cd8;
-  --bg-img: url("https://pic1.imgdb.cn/item/69148a523203f7be00f9686c.jpg");
   --glass-light: rgba(255,255,255,0.55);
   --glass-dark: rgba(40,40,60,0.45);
   --text-light: #f2f2f2;
@@ -19,21 +18,26 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --theme-color: #a8a5ff;
-    --bg-img: url("https://pic1.imgdb.cn/item/691528de3203f7be00fa3175.jpg");
   }
 }
-
 /* 背景 */
 body {
   font-family: "Microsoft YaHei", sans-serif;
   margin: 0;
   padding: 0;
   min-height: 100vh;
-  background: var(--bg-img) center/cover no-repeat fixed;
+  background: url("https://pic1.imgdb.cn/item/69148a523203f7be00f9686c.jpg") center/cover no-repeat fixed;
   color: var(--text-dark);
   position: relative;
   overflow-x: hidden;
   cursor: none; /* 隐藏默认光标 */
+}
+
+/* 深色模式背景 */
+@media (prefers-color-scheme: dark) {
+  body {
+    background: url("https://pic1.imgdb.cn/item/691528de3203f7be00fa3175.jpg") center/cover no-repeat fixed;
+  }
 }
 body::before {
   content: "";
@@ -376,10 +380,16 @@ body::before {
   <div class="cursor"></div>
   <div class="cursor-follower"></div>
   
-  <div id="background-container" style="position:fixed; top:0; left:0; width:100%; height:100%; z-index:-2; overflow:hidden;">
-  <img src="https://pic1.imgdb.cn/item/69148a523203f7be00f9686c.jpg" 
-       style="width:100%; height:100%; object-fit:cover; position:absolute;" 
-       alt="背景图">
+  <!-- 动态背景容器 -->
+  <div id="background-container" style="position:fixed; top:0; left:0; width:100%; height:100%; z-index:-2; overflow:hidden; display:none;">
+    <img src="https://pic1.imgdb.cn/item/69148a523203f7be00f9686c.jpg" 
+         id="light-bg" 
+         style="width:100%; height:100%; object-fit:cover; position:absolute;" 
+         alt="浅色背景">
+    <img src="https://pic1.imgdb.cn/item/691528de3203f7be00fa3175.jpg" 
+         id="dark-bg" 
+         style="width:100%; height:100%; object-fit:cover; position:absolute; display:none;" 
+         alt="深色背景">
   </div>
 <header>
   <div style="display:flex;align-items:center;gap:12px;">
@@ -652,7 +662,40 @@ async function renderItdog(id,list){
     }catch{row.classList.add("failed");row.querySelector(".ip").textContent="加载失败";}
   }));
 }
+// 检测并切换深浅色背景
+function updateBackgroundForColorScheme() {
+  const backgroundContainer = document.getElementById('background-container');
+  const lightBg = document.getElementById('light-bg');
+  const darkBg = document.getElementById('dark-bg');
+  
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    // 深色模式
+    lightBg.style.display = 'none';
+    darkBg.style.display = 'block';
+    backgroundContainer.style.display = 'block';
+  } else {
+    // 浅色模式
+    lightBg.style.display = 'block';
+    darkBg.style.display = 'none';
+    backgroundContainer.style.display = 'block';
+  }
+}
 
+// 监听系统主题变化
+if (window.matchMedia) {
+  const colorSchemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+  colorSchemeQuery.addEventListener('change', updateBackgroundForColorScheme);
+}
+
+// 页面加载时初始化背景
+document.addEventListener('DOMContentLoaded', function() {
+  updateBackgroundForColorScheme();
+  
+  // 原有的鼠标特效代码...
+  const cursor = document.querySelector('.cursor');
+  const follower = document.querySelector('.cursor-follower');
+  // ... 其余鼠标特效代码保持不变
+});
 // 执行所有渲染函数
 renderModule1();
 renderCelou("module1_celou", celouAPIs);
